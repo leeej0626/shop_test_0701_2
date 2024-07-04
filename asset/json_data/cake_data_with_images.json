@@ -1,0 +1,26 @@
+[
+    {
+        "name": "草莓三角蛋糕",
+        "description": "搭配進口草莓內陷",
+        "original_price": 350,
+        "discount": 0.9,
+        "discounted_price": 315,
+        "image_name": "strawberry-cake2"
+    },
+    {
+        "name": "巧克力慕斯蛋糕",
+        "description": "搭配新鮮水果",
+        "original_price": 400,
+        "discount": 0.85,
+        "discounted_price": 340,
+        "image_name": "chocolate-cake"
+    },
+    {
+        "name": "抹茶草莓蛋糕",
+        "description": "抹茶風味濃郁",
+        "original_price": 380,
+        "discount": 0.8,
+        "discounted_price": 304,
+        "image_name": "drink"
+    }
+]
