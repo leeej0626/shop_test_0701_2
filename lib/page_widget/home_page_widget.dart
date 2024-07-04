@@ -58,7 +58,7 @@ Widget product_grid_view(
     child: Column(
       children: [
         Container(
-          height: page_mode ? 270 : 300,
+          height: page_mode ? 170 : 200,
           child: GridView.count(
             childAspectRatio: 0.8,
             crossAxisCount: 2,
@@ -129,7 +129,7 @@ Widget product_list_view(
     child: Column(
       children: [
         Container(
-          height: page_mode ? 270 : 300,
+          height: page_mode ? 170 : 200,
           child: ListView.builder(
             itemBuilder: (_, int idx) {
               int idx2 = page_mode ? idx + s_idx : idx;
