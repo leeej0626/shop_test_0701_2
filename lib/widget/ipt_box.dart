@@ -23,10 +23,14 @@ Widget ipt_box(String title, IconData iconData, TextEditingController tec) {
                 border: InputBorder.none,
                 hintText: "輸入$title",
                 hintStyle: TextStyle(color: grey2),
-                suffixIcon: Icon(
+                suffix:  Icon(
                   iconData,
                   color: grey2,
-                )),
+                ),
+                /*suffixIcon: Icon(
+                  iconData,
+                  color: grey2,
+                )*/),
             controller: tec,
           ),
         ),
