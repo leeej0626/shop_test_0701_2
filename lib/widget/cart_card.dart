@@ -109,16 +109,20 @@ Widget cart_card(BuildContext context, String img_src, String title,
               on_del();
               scroll_to_top();
             },
-            child: Container(
-              height: 120,
-              width: 90,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), color: pink6),
-              child: Center(
-                child: Icon(
-                  Icons.delete_rounded,
-                  color: Colors.white,
-                  size: 30,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                height: 120,
+                width: 90,
+                color: pink6,
+                /*decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10), color: pink6),*/
+                child: Center(
+                  child: Icon(
+                    Icons.delete_rounded,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                 ),
               ),
             ),
