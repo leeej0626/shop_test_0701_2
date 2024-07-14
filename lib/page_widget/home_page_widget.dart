@@ -39,8 +39,8 @@ Widget type_card_view(List list, int ind_idx, Function(int) on_clink_btn) {
   );
 }
 
-Widget product_grid_view(
-    List list, BuildContext context, int ind_idx, Function(int) on_click) {
+Widget product_grid_view(List list, BuildContext context, int ind_idx,
+    Function(int) on_click, Function add_on_click) {
   int list_len = list.length;
   int o_page_q = 6;
   int show_count = 6, s_idx = 0, e_idx = 0;
@@ -79,6 +79,7 @@ Widget product_grid_view(
                   },
                   child: product_card_grid(title, image_name, price, () async {
                     await add_product_cart(title, int.parse(price), 1, 1);
+                    add_on_click();
                   }));
             }),
           ),
@@ -110,8 +111,8 @@ Widget product_grid_view(
   );
 }
 
-Widget product_list_view(
-    List list, BuildContext context, int ind_idx, Function(int) on_click) {
+Widget product_list_view(List list, BuildContext context, int ind_idx,
+    Function(int) on_click, Function add_click) {
   int list_len = list.length;
   int o_page_q = 5;
   int show_count = 5, s_idx = 0, e_idx = 0;
@@ -150,6 +151,7 @@ Widget product_list_view(
                     child: product_card_list(
                         title, image_name, price, description, () async {
                       await add_product_cart(title, int.parse(price), 1, 1);
+                      add_click();
                     })),
               );
             },
@@ -183,7 +185,7 @@ Widget product_list_view(
   );
 }
 
-Widget top_bar(BuildContext context) {
+Widget top_bar(BuildContext context, int cart_count) {
   return Align(
     alignment: Alignment.topRight,
     child: Row(
@@ -193,10 +195,28 @@ Widget top_bar(BuildContext context) {
           onTap: () {
             to_page(cart_page(), context);
           },
-          child: Icon(
-            Icons.shopping_cart,
-            size: 30,
-            color: pink5,
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Icon(
+                Icons.shopping_cart,
+                size: 30,
+                color: pink5,
+              ),
+              cart_count > 0
+                  ? CircleAvatar(
+                      backgroundColor: Colors.pink,
+                      radius: 7,
+                      child: Center(
+                          child: Text(
+                        cart_count > 99 ? "99+" : "$cart_count",
+                        style: TextStyle(
+                            fontSize: cart_count > 99 ? 8 : 10,
+                            color: Colors.white),
+                      )),
+                    )
+                  : Container(),
+            ],
           ),
         ),
         SizedBox(

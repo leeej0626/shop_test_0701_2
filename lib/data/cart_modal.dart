@@ -40,6 +40,14 @@ Future<String> get_product_img_name(String title) async {
   return img_name;
 }
 
+int get_cart_row_count() {
+  int qty = 0;
+  cart_list.forEach((e) {
+    qty += e.qty;
+  });
+  return qty;
+}
+
 String get_product_cart_qty(String title) {
   String qty = "1";
   cart_list.forEach((e) {

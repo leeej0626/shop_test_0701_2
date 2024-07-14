@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_test_0701/cart_page.dart';
+import 'package:shop_test_0701/data/cart_modal.dart';
 import 'package:shop_test_0701/data/data.dart';
 import 'package:shop_test_0701/product_detial_page.dart';
 import 'package:shop_test_0701/widget/box.dart';
@@ -25,6 +26,7 @@ class _home_pageState extends State<home_page> {
   int indicator_idx = 0;
   int page_sel_idx_list = 0;
   int page_sel_idx_grid = 0;
+  int cart_count = 0;
   String ind_img = "", ind_title = "", ind_con = "";
   int ind_off = 0, ind_price = 0, ind_dis_price = 0;
   bool is_swip = false;
@@ -105,7 +107,7 @@ class _home_pageState extends State<home_page> {
         introduce_list.isNotEmpty
             ? Column(
                 children: [
-                  top_bar(context),
+                  top_bar(context, cart_count),
                   SizedBox(
                     height: 20,
                   ),
@@ -222,12 +224,20 @@ class _home_pageState extends State<home_page> {
                               setState(() {
                                 page_sel_idx_grid = idx;
                               });
+                            }, () {
+                              setState(() {
+                                cart_count = get_cart_row_count();
+                              });
                             })
                           : product_list_view(
                               current_projuct_list, context, page_sel_idx_list,
                               (idx) {
                               setState(() {
                                 page_sel_idx_list = idx;
+                              });
+                            }, () {
+                              setState(() {
+                                cart_count = get_cart_row_count();
                               });
                             })
                       : !serach_empty
