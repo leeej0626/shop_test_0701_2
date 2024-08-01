@@ -5,10 +5,12 @@ import 'package:shop_test_0701/s_sp_page.dart';
 import 'package:shop_test_0701/widget/box.dart';
 import 'package:shop_test_0701/widget/btn_box.dart';
 import 'package:shop_test_0701/widget/ipt_box.dart';
+import 'package:shop_test_0701/widget/toast.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
 
 import 'data/data.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 class login_page extends StatefulWidget {
   const login_page({super.key});
@@ -22,7 +24,23 @@ class _login_pageState extends State<login_page> {
   TextEditingController pass_tec = TextEditingController();
   bool pass_b = true;
 
-  Future<bool> ch_token(String token) async {
+  bool check_tec() {
+    Map<TextEditingController, String> list_tec = {
+      email_tec: "帳號",
+      pass_tec: "密碼"
+    };
+    for (var item in list_tec.entries) {
+      var key = item.key;
+      var value = item.value;
+      if (key.text.isEmpty) {
+        show_msg("請輸入${value}", Icons.warning_amber, msg_state.warn, context);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /*Future<bool> ch_token(String token) async {
     Dio dio = Dio();
     try {
       Response res = await dio.get("https://todoo.5xcamp.us/check",
@@ -39,26 +57,20 @@ class _login_pageState extends State<login_page> {
       }
     }
     return false;
-  }
+  }*/
 
   Future<bool> check_login(String user, String pass) async {
-    Dio dio = Dio();
-    try {
-      Response res = await dio.post("https://todoo.5xcamp.us/users/sign_in",
-          data: {
-            "user": {"email": user, "password": pass}
-          },
-          options: Options(headers: {
-            "Content-Type": "application/json",
-            "accept": "application/json"
-          }));
-      print(res.data);
-      print(res.headers.value("authorization").toString());
-      await ch_token(res.headers.value("authorization").toString());
-      return true;
-    } catch (e) {
-      if (e is DioError) {
-        print(e.response?.data);
+    var url = Uri.parse(
+        "https://twob.fun/test/cake_shop_msg/api/get/check_customer_login.php");
+    var rp = await http.post(url, headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }, body: {
+      "user": user,
+      "pass": pass
+    });
+    if (rp.statusCode == 200) {
+      if (rp.body == "1") {
+        return true;
       }
     }
     return false;
@@ -113,13 +125,19 @@ class _login_pageState extends State<login_page> {
                       height: 40,
                     ),
                     bg_pink_btn("登入", () async {
-                      /*bool b = await check_login(email_tec.text, pass_tec.text);
-                      if (b) {
-                        print("成功");
-                      } else {
-                        print("失敗");
-                      }*/
-                      to_page(s_sp_page(), context);
+                      email_tec.text = "abc";
+                      pass_tec.text = "123";
+                      bool ch_s = check_tec();
+                      if (ch_s) {
+                        bool b =
+                            await check_login(email_tec.text, pass_tec.text);
+                        if (b) {
+                          to_page(s_sp_page(), context);
+                        } else {
+                          show_msg("登入失敗", Icons.warning_amber, msg_state.error,
+                              context);
+                        }
+                      }
                     })
                   ],
                 ),

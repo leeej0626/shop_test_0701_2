@@ -4,6 +4,7 @@ import 'package:shop_test_0701/login_page.dart';
 import 'package:shop_test_0701/widget/box.dart';
 import 'package:shop_test_0701/widget/btn_box.dart';
 import 'package:shop_test_0701/widget/ipt_box.dart';
+import 'package:shop_test_0701/widget/toast.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -21,7 +22,28 @@ class _register_pageState extends State<register_page> {
   TextEditingController pass1_tec = TextEditingController();
   TextEditingController pass2_tec = TextEditingController();
 
-  Future<bool> add_ac(String user, String pas,String name) async {
+  bool check_tec() {
+    Map<TextEditingController, String> list_tec = {
+      name_tec: "名稱",
+      email_tec: "帳號",
+      pass1_tec: "密碼"
+    };
+    for (var item in list_tec.entries) {
+      var key = item.key;
+      var value = item.value;
+      if (key.text.isEmpty) {
+        show_msg("請輸入${value}", Icons.warning_amber, msg_state.warn, context);
+        return false;
+      }
+    }
+    if (pass1_tec.text != pass2_tec.text) {
+      show_msg("密碼須和再次輸入相同", Icons.warning_amber, msg_state.warn, context);
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> add_ac(String user, String pas, String name) async {
     /*Dio dio = Dio();
     try {
       Response response = await dio.post(
@@ -40,16 +62,17 @@ class _register_pageState extends State<register_page> {
         print(e.response?.data);
       }
     }*/
-    var url = Uri.parse("https://twob.fun/test/cake_shop_msg/api/add/add_customer.php");
-    var rp=await http.post(url, headers: {
-      'Content-Type': 'application/json',
-      'accept': 'application/json',
+    var url = Uri.parse(
+        "https://twob.fun/test/cake_shop_msg/api/add/add_customer.php");
+    var rp = await http.post(url, headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
     }, body: {
-      "user": {"user":user,"name":name,"password":pas},
+      "user": user,
+      "name": name,
+      "password": pas,
     });
-    if(rp.statusCode==200){
+    if (rp.statusCode == 200) {
       return true;
-    }else{
     }
     return false;
   }
@@ -95,11 +118,21 @@ class _register_pageState extends State<register_page> {
                   SizedBox(
                     height: 20,
                   ),
-                  bg_pink_btn("註冊", () async{
-                    bool b=await add_ac(email_tec.text,pass1_tec.text,name_tec.text);
-                    if(b){
-
-                      print("成功");
+                  bg_pink_btn("註冊", () async {
+                    bool ch_s = check_tec();
+                    if (!ch_s) {
+                      return;
+                    }
+                    bool b = await add_ac(
+                        email_tec.text, pass1_tec.text, name_tec.text);
+                    if (b) {
+                      show_msg("註冊成功", Icons.done, msg_state.success, context);
+                      Future.delayed(Duration(seconds: 2), () {
+                        to_page(login_page(), context);
+                      });
+                    } else {
+                      show_msg("註冊失敗", Icons.warning_amber, msg_state.error,
+                          context);
                     }
                   }),
                   SizedBox(
