@@ -22,7 +22,7 @@ class _register_pageState extends State<register_page> {
   TextEditingController pass2_tec = TextEditingController();
 
   Future<bool> add_ac(String user, String pas,String name) async {
-    Dio dio = Dio();
+    /*Dio dio = Dio();
     try {
       Response response = await dio.post(
         "https://todoo.5xcamp.us/users",
@@ -39,21 +39,18 @@ class _register_pageState extends State<register_page> {
       if(e is DioError){
         print(e.response?.data);
       }
-    }
-    /*var url = Uri.parse("https://todoo.5xcamp.us/api-docs/index.html");
-
+    }*/
+    var url = Uri.parse("https://twob.fun/test/cake_shop_msg/api/add/add_customer.php");
     var rp=await http.post(url, headers: {
       'Content-Type': 'application/json',
       'accept': 'application/json',
     }, body: {
-      "user": {"email":user,"nickname":name,"password":pas},
+      "user": {"user":user,"name":name,"password":pas},
     });
     if(rp.statusCode==200){
-      print(rp.body);
       return true;
     }else{
-      print(rp.body);
-    }*/
+    }
     return false;
   }
 
@@ -101,6 +98,7 @@ class _register_pageState extends State<register_page> {
                   bg_pink_btn("註冊", () async{
                     bool b=await add_ac(email_tec.text,pass1_tec.text,name_tec.text);
                     if(b){
+
                       print("成功");
                     }
                   }),
