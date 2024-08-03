@@ -80,6 +80,7 @@ Widget off_card(int value) {
 }
 
 Widget type_card(String img_name, String txt, bool state) {
+  String img_url = "https://twob.fun/test/cake_shop_msg/" + "$img_name";
   return state
       ? Container(
           decoration: BoxDecoration(
@@ -90,8 +91,8 @@ Widget type_card(String img_name, String txt, bool state) {
               CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 20,
-                child: Image.asset(
-                  "asset/$img_name.png",
+                child: Image.network(
+                  img_url,
                   width: 25,
                   height: 25,
                 ),
@@ -109,8 +110,8 @@ Widget type_card(String img_name, String txt, bool state) {
       : CircleAvatar(
           backgroundColor: pink7,
           radius: 40,
-          child: Image.asset(
-            "asset/$img_name.png",
+          child: Image.network(
+            img_url,
             width: 30,
             height: 30,
           ),

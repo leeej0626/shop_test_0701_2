@@ -24,8 +24,12 @@ to_page(Widget page, BuildContext context) {
 }
 
 Future<List> get_json_file(String name) async {
-  String txt = await rootBundle.loadString("asset/json_data/$name.json");
-  return jsonDecode(txt);
+  try {
+    String txt = await rootBundle.loadString("asset/json_data/$name.json");
+    return jsonDecode(txt);
+  } catch (_) {
+    return [];
+  }
 }
 
 close_keyboard(BuildContext context) {

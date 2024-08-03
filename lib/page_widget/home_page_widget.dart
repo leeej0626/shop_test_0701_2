@@ -19,8 +19,9 @@ Widget type_card_view(List list, int ind_idx, Function(int) on_clink_btn) {
         String title = "";
         String img_src = "";
         if (idx != 0) {
-          title = list[idx - 1]["title"];
-          img_src = list[idx - 1]["image_name"];
+          title = list[idx - 1]["name"];
+          img_src =
+              list[idx - 1]["img_src"].toString().replaceAll("../../", "");
         }
         bool s = idx == ind_idx;
         return GestureDetector(
@@ -29,7 +30,7 @@ Widget type_card_view(List list, int ind_idx, Function(int) on_clink_btn) {
             width: ind_idx == idx ? 110 : 60,
             margin: EdgeInsets.only(right: 20),
             child: idx == 0
-                ? type_card("pie", "全部", s)
+                ? type_card("images/pie.png", "全部", s)
                 : type_card(img_src, title, s),
           ),
         );

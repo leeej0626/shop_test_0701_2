@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_test_0701/cart_page.dart';
 import 'package:shop_test_0701/data/cart_modal.dart';
@@ -9,6 +11,7 @@ import 'package:shop_test_0701/widget/dots.dart';
 import 'package:shop_test_0701/page_widget/home_page_widget.dart';
 import 'package:shop_test_0701/widget/ipt_box.dart';
 import 'package:shop_test_0701/widget/product_card.dart';
+import 'package:http/http.dart' as http;
 
 class home_page extends StatefulWidget {
   home_page({super.key});
@@ -32,6 +35,22 @@ class _home_pageState extends State<home_page> {
   bool is_swip = false;
   bool grid_mode = true;
   bool serach_empty = false;
+  bool type_goods_empty = false;
+
+  Future<List> get_type_api_data() async {
+    var url = Uri.parse(
+        "https://twob.fun/test/cake_shop_msg/api/get/get_product_type_json.php");
+    var rp = await http.post(url, headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }, body: {
+      "pass": "123"
+    });
+    if (rp.statusCode == 200) {
+      List json_list = jsonDecode(rp.body);
+      return json_list;
+    }
+    return [];
+  }
 
   get_introduct_data(int idx) async {
     setState(() {
@@ -82,11 +101,20 @@ class _home_pageState extends State<home_page> {
     setState(() {
       current_projuct_list = res;
     });
+    if (current_projuct_list.isEmpty) {
+      setState(() {
+        type_goods_empty = true;
+      });
+    } else {
+      setState(() {
+        type_goods_empty = false;
+      });
+    }
   }
 
   init_ind_data() async {
     List res = await get_json_file("cake_data_with_images");
-    List res_type = await get_json_file("type_list");
+    List res_type = await get_type_api_data();
     setState(() {
       introduce_list = res;
       type_list = res_type;
@@ -210,6 +238,8 @@ class _home_pageState extends State<home_page> {
                   type_card_view(type_list, type_ind, (int idx) {
                     setState(() {
                       type_ind = idx;
+                      serach_empty = false;
+                      type_goods_empty = false;
                       update_cur_pro_list(idx);
                     });
                   }),
@@ -240,9 +270,11 @@ class _home_pageState extends State<home_page> {
                                 cart_count = get_cart_row_count();
                               });
                             })
-                      : !serach_empty
+                      : !serach_empty && !type_goods_empty
                           ? cpi_box()
-                          : empty_box(Icons.search_off_outlined, "查無商品"),
+                          : serach_empty
+                              ? empty_box(Icons.search_off_outlined, "查無商品")
+                              : empty_box(Icons.close, "尚無商品"),
                 ],
               )
             : Container(
