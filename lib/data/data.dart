@@ -19,6 +19,9 @@ Color grey3 = Color(0xffF8F8F8);
 Color grey4 = Color(0xffA2A6AC);
 Color grey5 = Color(0xff798086);
 
+String login_name="";
+String login_user="";
+
 to_page(Widget page, BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => page));
 }

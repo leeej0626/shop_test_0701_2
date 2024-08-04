@@ -13,6 +13,8 @@ import 'package:shop_test_0701/widget/ipt_box.dart';
 import 'package:shop_test_0701/widget/product_card.dart';
 import 'package:http/http.dart' as http;
 
+import 'api/get_product.dart';
+
 class home_page extends StatefulWidget {
   home_page({super.key});
 
@@ -36,21 +38,7 @@ class _home_pageState extends State<home_page> {
   bool grid_mode = true;
   bool serach_empty = false;
   bool type_goods_empty = false;
-
-  Future<List> get_type_api_data() async {
-    var url = Uri.parse(
-        "https://twob.fun/test/cake_shop_msg/api/get/get_product_type_json.php");
-    var rp = await http.post(url, headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }, body: {
-      "pass": "123"
-    });
-    if (rp.statusCode == 200) {
-      List json_list = jsonDecode(rp.body);
-      return json_list;
-    }
-    return [];
-  }
+  bool get_api_done = false;
 
   get_introduct_data(int idx) async {
     setState(() {
@@ -119,6 +107,7 @@ class _home_pageState extends State<home_page> {
       introduce_list = res;
       type_list = res_type;
       get_introduct_data(0);
+      get_api_done = true;
     });
     update_cur_pro_list(0);
   }
@@ -132,7 +121,7 @@ class _home_pageState extends State<home_page> {
   @override
   Widget build(BuildContext context) {
     return sfld(
-        introduce_list.isNotEmpty
+        introduce_list.isNotEmpty && get_api_done
             ? Column(
                 children: [
                   top_bar(context, cart_count),
@@ -234,7 +223,7 @@ class _home_pageState extends State<home_page> {
                     setState(() {
                       grid_mode = false;
                     });
-                  }),
+                  }, grid_mode),
                   type_card_view(type_list, type_ind, (int idx) {
                     setState(() {
                       type_ind = idx;

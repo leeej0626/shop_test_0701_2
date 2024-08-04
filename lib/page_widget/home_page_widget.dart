@@ -238,7 +238,7 @@ Widget top_bar(BuildContext context, int cart_count) {
   );
 }
 
-Widget change_mode(Function grid_btn, Function list_btn) {
+Widget change_mode(Function grid_btn, Function list_btn, bool state) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
@@ -248,7 +248,7 @@ Widget change_mode(Function grid_btn, Function list_btn) {
         },
         child: Icon(
           Icons.grid_view_sharp,
-          color: grey2,
+          color: state ? pink6 : pink1,
           size: 30,
         ),
       ),
@@ -261,7 +261,7 @@ Widget change_mode(Function grid_btn, Function list_btn) {
         },
         child: Icon(
           Icons.list,
-          color: grey2,
+          color: state ? pink1 : pink6,
           size: 35,
         ),
       )

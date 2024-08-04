@@ -8,6 +8,7 @@ import 'package:shop_test_0701/widget/ipt_box.dart';
 import 'package:shop_test_0701/widget/toast.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
 
+import 'api/get_login.dart';
 import 'data/data.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -59,23 +60,6 @@ class _login_pageState extends State<login_page> {
     return false;
   }*/
 
-  Future<bool> check_login(String user, String pass) async {
-    var url = Uri.parse(
-        "https://twob.fun/test/cake_shop_msg/api/get/check_customer_login.php");
-    var rp = await http.post(url, headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }, body: {
-      "user": user,
-      "pass": pass
-    });
-    if (rp.statusCode == 200) {
-      if (rp.body == "1") {
-        return true;
-      }
-    }
-    return false;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -90,82 +74,93 @@ class _login_pageState extends State<login_page> {
 
   @override
   Widget build(BuildContext context) {
-    return sfld(
-        Column(
-          children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: title_pink("登入"),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: EdgeInsets.only(bottom: 40),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ipt_box("電子郵件", Icons.email_outlined, email_tec),
-                    password_box("密碼", pass_tec, () {
-                      setState(() {
-                        pass_b = !pass_b;
-                      });
-                    }, pass_b),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                          margin: EdgeInsets.only(right: 5),
-                          child: GestureDetector(
-                              onTap: () {},
-                              child: base_txt("忘記密碼?", cor: pink1))),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    bg_pink_btn("登入", () async {
-                      email_tec.text = "abc";
-                      pass_tec.text = "123";
-                      bool ch_s = check_tec();
-                      if (ch_s) {
-                        bool b =
-                            await check_login(email_tec.text, pass_tec.text);
-                        if (b) {
-                          to_page(s_sp_page(), context);
-                        } else {
-                          show_msg("登入失敗", Icons.warning_amber, msg_state.error,
-                              context);
+    return WillPopScope(
+      onWillPop: () async {
+        if (login_user.isEmpty) {
+          show_msg("請先登入", Icons.warning_amber, msg_state.warn, context);
+          return false;
+        }
+        return true;
+      },
+      child: sfld(
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: title_pink("登入"),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ipt_box("電子郵件", Icons.email_outlined, email_tec),
+                      password_box("密碼", pass_tec, () {
+                        setState(() {
+                          pass_b = !pass_b;
+                        });
+                      }, pass_b),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                            margin: EdgeInsets.only(right: 5),
+                            child: GestureDetector(
+                                onTap: () {},
+                                child: base_txt("忘記密碼?", cor: pink1))),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      bg_pink_btn("登入", () async {
+                        email_tec.text = "abc";
+                        pass_tec.text = "123";
+                        bool ch_s = check_tec();
+                        if (ch_s) {
+                          bool b =
+                              await check_login(email_tec.text, pass_tec.text);
+                          if (b) {
+                            login_user = email_tec.text;
+                            login_name = await get_login_user_name(login_user);
+                            to_page(s_sp_page(), context);
+                          } else {
+                            show_msg("登入失敗", Icons.warning_amber,
+                                msg_state.error, context);
+                          }
                         }
-                      }
-                    })
-                  ],
+                      })
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.only(bottom: 30),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    base_txt("還沒有帳號?"),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    bg_pick2_btn("註冊", () {
-                      to_page(register_page(), context);
-                    })
-                  ],
-                ),
+              SizedBox(
+                height: 50,
               ),
-            )
-          ],
-        ),
-        context);
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      base_txt("還沒有帳號?"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      bg_pick2_btn("註冊", () {
+                        to_page(register_page(), context);
+                      })
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          context),
+    );
   }
 }

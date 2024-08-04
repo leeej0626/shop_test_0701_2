@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_test_0701/home_page.dart';
+import 'package:shop_test_0701/login_page.dart';
 
 import 'data/data.dart';
 
@@ -13,7 +14,11 @@ class s_sp_page extends StatefulWidget {
 class _s_sp_pageState extends State<s_sp_page> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 2), () => to_page(home_page(), context));
+    if (login_user.isNotEmpty) {
+      Future.delayed(Duration(seconds: 2), () => to_page(home_page(), context));
+    } else {
+      to_page(login_page(), context);
+    }
     super.initState();
   }
 
