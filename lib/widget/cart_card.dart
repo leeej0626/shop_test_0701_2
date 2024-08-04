@@ -7,6 +7,7 @@ import 'btn_box.dart';
 
 Widget cart_card(BuildContext context, String img_src, String title,
     String price, String qty, Function on_del, Function on_edit_qty) {
+  String img_src2 = get_img_src(img_src);
   ScrollController sro_col = ScrollController();
   TextEditingController qty_tec = TextEditingController();
   qty_tec.text = qty;
@@ -46,8 +47,8 @@ Widget cart_card(BuildContext context, String img_src, String title,
                                 color: Colors.white),
                             child: Padding(
                               padding: EdgeInsets.all(5),
-                              child: Image.asset(
-                                "asset/product/$img_src.png",
+                              child: Image.network(
+                                img_src2,
                                 width: 80,
                               ),
                             ),
@@ -91,11 +92,13 @@ Widget cart_card(BuildContext context, String img_src, String title,
                     ),
                     Align(
                         alignment: Alignment.bottomRight,
-                        child: edit_qty_box(
+                        child: edit_qty_box2(qty_tec, title, () {
+                          on_edit_qty();
+                        })) /*edit_qty_box(
                           qty_tec,
                           title,
                           () => on_edit_qty(),
-                        ))
+                        ))*/
                   ],
                 ),
               ),

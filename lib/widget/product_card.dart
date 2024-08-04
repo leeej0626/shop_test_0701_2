@@ -6,6 +6,7 @@ import 'btn_box.dart';
 
 Widget product_card_grid(
     String title, String img_src, String price, Function add_cart) {
+  String img_src2 = get_img_src(img_src);
   return Container(
     width: 150,
     height: 150,
@@ -19,8 +20,8 @@ Widget product_card_grid(
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
-                Image.asset(
-                  "asset/product/$img_src.png",
+                Image.network(
+                  img_src2,
                   width: 80,
                   height: 80,
                 ),
@@ -70,6 +71,7 @@ Widget product_card_grid(
 
 Widget product_card_list(
     String title, String img_src, String price, String txt, Function add_cart) {
+  String img_src2 = get_img_src(img_src);
   return Container(
     decoration: BoxDecoration(
         color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -84,8 +86,8 @@ Widget product_card_list(
             decoration: BoxDecoration(
                 color: pink1, borderRadius: BorderRadius.circular(10)),
             child: Center(
-              child: Image.asset(
-                "asset/product/$img_src.png",
+              child: Image.network(
+                img_src2,
                 width: 70,
               ),
             ),

@@ -3,12 +3,14 @@ import 'package:shop_test_0701/data/cart_modal.dart';
 
 import '../data/data.dart';
 
-Widget bg_pink_btn(String txt, Function on_clink) {
+const Color _pink1 = Color(0xffFF9AA2);
+
+Widget bg_pink_btn(String txt, Function on_clink, {Color color = _pink1}) {
   return Container(
     height: 45,
     width: double.infinity,
     child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: pink1, elevation: 0),
+        style: ElevatedButton.styleFrom(backgroundColor: color, elevation: 0),
         onPressed: () => on_clink(),
         child: Text(
           txt,
@@ -60,6 +62,7 @@ Widget reduce_btn(Function on_clink) {
 }
 
 Widget qty_box(TextEditingController tec, String title) {
+  //tec.text="1";
   int qty = int.parse(tec.text);
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
@@ -78,15 +81,16 @@ Widget qty_box(TextEditingController tec, String title) {
             textAlign: TextAlign.center,
             decoration: InputDecoration(border: InputBorder.none),
             controller: tec,
-            onEditingComplete: () {
-              /*if (tec.text.isEmpty) {
+            onSubmitted: (val) {},
+            /*onEditingComplete: () {
+              if (tec.text.isEmpty) {
                 tec.text = "1";
                 return;
               }
               if (int.parse(tec.text) > 99) {
                 tec.text = "1";
-              }*/
-            },
+              }
+            },*/
           )),
       add_btn(() {
         if (qty < 50) {
@@ -98,20 +102,17 @@ Widget qty_box(TextEditingController tec, String title) {
   );
 }
 
-Widget edit_qty_box(
-  TextEditingController tec,
-  String title,
-  Function on_edit,
-) {
+Widget edit_qty_box2(
+    TextEditingController tec, String title, Function() on_edit) {
   int qty = int.parse(tec.text);
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      reduce_btn(() {
+      reduce_btn(() async {
         if (qty > 1) {
           qty--;
           tec.text = qty.toString();
-          edit_qty(title, qty);
+          await edit_qty(title, qty);
           on_edit();
         }
       }),
@@ -123,23 +124,84 @@ Widget edit_qty_box(
             style: TextStyle(color: pink6),
             textAlign: TextAlign.center,
             decoration: InputDecoration(border: InputBorder.none),
+            onSubmitted: (val) async {
+              tec.text = val;
+              on_edit();
+            },
             controller: tec,
-            onEditingComplete: () {
-              /*if (tec.text.isEmpty) {
+            /*onEditingComplete: () {
+              if (tec.text.isEmpty) {
                 tec.text = "1";
                 return;
               }
               if (int.parse(tec.text) > 99) {
                 tec.text = "1";
-              }*/
-              on_edit();
-            },
+              }
+            },*/
           )),
-      add_btn(() {
+      add_btn(() async {
         if (qty < 50) {
           qty++;
           tec.text = qty.toString();
-          edit_qty(title, qty);
+          await edit_qty(title, qty);
+          on_edit();
+        }
+      }),
+    ],
+  );
+}
+
+Widget edit_qty_box(
+  TextEditingController tec,
+  String title,
+  Function on_edit,
+) {
+  TextEditingController tec2 = TextEditingController();
+  int qty = int.parse(tec.text);
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      reduce_btn(() async {
+        if (qty > 1) {
+          qty--;
+          tec.text = qty.toString();
+          await edit_qty(title, qty);
+          on_edit();
+        }
+      }),
+      Container(
+          width: 30,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            style: TextStyle(color: pink6),
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(border: InputBorder.none),
+            controller: tec2,
+            onSubmitted: (val) {
+              /*if (tec.text.isEmpty) {
+                tec.text = "1";
+              }
+              if (int.parse(tec.text) > 99) {
+                tec.text = "1";
+              }*/
+              print(val);
+              on_edit();
+            },
+            /*onEditingComplete: () {
+              if (tec.text.isEmpty) {
+                tec.text = "1";
+                return;
+              }
+              if (int.parse(tec.text) > 99) {
+                tec.text = "1";
+              }
+            },*/
+          )),
+      add_btn(() async {
+        if (qty < 50) {
+          qty++;
+          tec.text = qty.toString();
+          await edit_qty(title, qty);
           on_edit();
         }
       }),

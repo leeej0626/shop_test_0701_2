@@ -6,10 +6,12 @@ import 'package:shop_test_0701/widget/btn_box.dart';
 import 'package:shop_test_0701/widget/ipt_box.dart';
 import 'package:shop_test_0701/widget/toast.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 import 'api/add.dart';
+import 'api/get_login.dart';
 
 class register_page extends StatefulWidget {
   register_page({super.key});
@@ -44,8 +46,6 @@ class _register_pageState extends State<register_page> {
     }
     return true;
   }
-
-
 
   bool pass1_b = true;
   bool pass2_b = true;
@@ -89,8 +89,20 @@ class _register_pageState extends State<register_page> {
                     height: 20,
                   ),
                   bg_pink_btn("註冊", () async {
+                    if (!kIsWeb) {
+                      if (!await isNetwork()) {
+                        ch_net(context);
+                        return;
+                      }
+                    }
                     bool ch_s = check_tec();
+                    bool is_exists = await check_user_is_exists(email_tec.text);
                     if (!ch_s) {
+                      return;
+                    }
+                    if (!is_exists) {
+                      show_msg("此帳號已存在", Icons.warning_amber, msg_state.error,
+                          context);
                       return;
                     }
                     bool b = await add_ac(

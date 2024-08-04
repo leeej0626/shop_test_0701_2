@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shop_test_0701/db/sf_db.dart';
 import 'package:shop_test_0701/home_page.dart';
 import 'package:shop_test_0701/register_page.dart';
 import 'package:shop_test_0701/s_sp_page.dart';
@@ -7,11 +9,12 @@ import 'package:shop_test_0701/widget/btn_box.dart';
 import 'package:shop_test_0701/widget/ipt_box.dart';
 import 'package:shop_test_0701/widget/toast.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
-
+import 'package:flutter/foundation.dart';
 import 'api/get_login.dart';
 import 'data/data.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_auth/local_auth.dart';
 
 class login_page extends StatefulWidget {
   const login_page({super.key});
@@ -21,9 +24,26 @@ class login_page extends StatefulWidget {
 }
 
 class _login_pageState extends State<login_page> {
+  final LocalAuthentication auth = LocalAuthentication();
   TextEditingController email_tec = TextEditingController();
   TextEditingController pass_tec = TextEditingController();
   bool pass_b = true;
+
+  Future<bool> check_ident() async {
+    bool r = false;
+    try {
+      r = await auth.authenticate(
+        localizedReason: "請進行身分認證",
+        options: AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      print(e);
+    }
+    return r;
+  }
 
   bool check_tec() {
     Map<TextEditingController, String> list_tec = {
@@ -60,8 +80,35 @@ class _login_pageState extends State<login_page> {
     return false;
   }*/
 
+  void ch_is_login() async {
+    String login_u = await get_login_user();
+    login_user = login_u;
+    if (login_u.isNotEmpty && await check_ident()) {
+      init_login_data();
+      to_page(s_sp_page(), context);
+    }
+  }
+
+  void init_login_data() async {
+    await set_user(login_user);
+    var map = await get_login_data(login_user);
+    login_name = map['name'];
+    login_num = map['num'];
+    login_pass = map['password'];
+  }
+
+  void init() async {
+    if (!kIsWeb) {
+      bool r = await ch_net(context);
+      if (r) {
+        ch_is_login();
+      }
+    }
+  }
+
   @override
   void initState() {
+    init();
     super.initState();
   }
 
@@ -117,15 +164,24 @@ class _login_pageState extends State<login_page> {
                         height: 40,
                       ),
                       bg_pink_btn("登入", () async {
-                        email_tec.text = "abc";
-                        pass_tec.text = "123";
+                        if (email_tec.text.isEmpty && pass_tec.text.isEmpty) {
+                          email_tec.text = "abc";
+                          pass_tec.text = "123";
+                        }
+                        if (!kIsWeb) {
+                          if (!await isNetwork()) {
+                            ch_net(context);
+                            return;
+                          }
+                        }
                         bool ch_s = check_tec();
                         if (ch_s) {
                           bool b =
                               await check_login(email_tec.text, pass_tec.text);
                           if (b) {
                             login_user = email_tec.text;
-                            login_name = await get_login_user_name(login_user);
+                            login_pass = pass_tec.text;
+                            init_login_data();
                             to_page(s_sp_page(), context);
                           } else {
                             show_msg("登入失敗", Icons.warning_amber,

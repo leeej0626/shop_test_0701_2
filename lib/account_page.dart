@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_test_0701/data/data.dart';
+import 'package:shop_test_0701/db/sf_db.dart';
 import 'package:shop_test_0701/login_page.dart';
+import 'package:shop_test_0701/view_account_page.dart';
 import 'package:shop_test_0701/widget/btn_box.dart';
 import 'package:shop_test_0701/widget/txt_box.dart';
 
@@ -34,7 +36,9 @@ class _account_pageState extends State<account_page> {
               SizedBox(
                 height: 20,
               ),
-              btn_row("編輯資料", Icons.account_circle, () {}),
+              btn_row("查看帳號", Icons.account_circle, () {
+                to_page(view_account_page(), context);
+              }),
               btn_row("查看訂單", Icons.list, () {}),
               out_btn_row(context)
             ],
@@ -82,9 +86,10 @@ Widget out_btn_row(BuildContext context) {
     width: double.infinity,
     margin: EdgeInsets.only(bottom: 20),
     child: GestureDetector(
-      onTap: () {
-        login_user="";
-        login_name="";
+      onTap: () async {
+        login_user = "";
+        login_name = "";
+        await set_user("");
         to_page(login_page(), context);
       },
       child: Row(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_test_0701/cart_page.dart';
 import 'package:shop_test_0701/data/cart_modal.dart';
 import 'package:shop_test_0701/data/data.dart';
+import 'package:shop_test_0701/db/cart_db.dart';
 import 'package:shop_test_0701/product_detial_page.dart';
 import 'package:shop_test_0701/widget/box.dart';
 import 'package:shop_test_0701/widget/card_box.dart';
@@ -23,15 +24,17 @@ class home_page extends StatefulWidget {
 }
 
 class _home_pageState extends State<home_page> {
+  var cart_db2 = cart_db();
   TextEditingController serach_tec = TextEditingController();
   List introduce_list = [];
   List type_list = [];
   List current_projuct_list = [];
+  List projuct_list = [];
   int type_ind = 0;
   int indicator_idx = 0;
   int page_sel_idx_list = 0;
   int page_sel_idx_grid = 0;
-  int cart_count = 0;
+
   String ind_img = "", ind_title = "", ind_con = "";
   int ind_off = 0, ind_price = 0, ind_dis_price = 0;
   bool is_swip = false;
@@ -54,7 +57,7 @@ class _home_pageState extends State<home_page> {
 
   update_cur_pro_list(int idx) async {
     if (idx == 0) {
-      List res2 = [];
+      /*List res2 = [];
       List file_list = [
         "birthday_cakes",
         "triangular_cakes",
@@ -64,13 +67,13 @@ class _home_pageState extends State<home_page> {
       for (var e in file_list) {
         List res = await get_json_file(e);
         res2.addAll(res);
-      }
+      }*/
       setState(() {
-        current_projuct_list = res2;
+        current_projuct_list = projuct_list;
       });
       return;
     }
-    String file_name = "";
+    /*String file_name = "";
     switch (idx) {
       case 1:
         file_name = "birthday_cakes";
@@ -85,9 +88,11 @@ class _home_pageState extends State<home_page> {
         file_name = "fruit_cakes";
         break;
     }
-    List res = await get_json_file(file_name);
+    List res = await get_json_file(file_name);*/
     setState(() {
-      current_projuct_list = res;
+      current_projuct_list = projuct_list.where((e) {
+        return e["type"] == type_list[idx - 1]["name"];
+      }).toList();
     });
     if (current_projuct_list.isEmpty) {
       setState(() {
@@ -103,12 +108,15 @@ class _home_pageState extends State<home_page> {
   init_ind_data() async {
     List res = await get_json_file("cake_data_with_images");
     List res_type = await get_type_api_data();
+    List res_product_list = await get_product_api_data();
     setState(() {
       introduce_list = res;
       type_list = res_type;
+      projuct_list = res_product_list;
       get_introduct_data(0);
       get_api_done = true;
     });
+    cart_db2.get_user_sum_qty();
     update_cur_pro_list(0);
   }
 
@@ -120,156 +128,171 @@ class _home_pageState extends State<home_page> {
 
   @override
   Widget build(BuildContext context) {
-    return sfld(
-        introduce_list.isNotEmpty && get_api_done
-            ? Column(
-                children: [
-                  top_bar(context, cart_count),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  serach_bar(serach_tec, () {
-                    String serach_txt = serach_tec.text;
-                    if (serach_txt.isEmpty) {
-                      update_cur_pro_list(type_ind);
-                    } else {
-                      List res = current_projuct_list;
-                      setState(() {
-                        current_projuct_list = res.where((e) {
-                          return e["name"].toString().contains(serach_txt) ||
-                              e["price"].toString().contains(serach_txt) ||
-                              e["description"].toString().contains(serach_txt);
-                        }).toList();
-                        if (current_projuct_list.isEmpty) {
-                          serach_empty = true;
-                        } else {
-                          serach_empty = false;
-                        }
-                      });
-                    }
-                    close_keyboard(context);
-                  }),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  GestureDetector(
-                    onHorizontalDragStart: (de) {
-                      is_swip = false;
-                    },
-                    onHorizontalDragEnd: (de) {
-                      is_swip = false;
-                    },
-                    onHorizontalDragUpdate: (detail) {
-                      int sens = 8;
-                      if (is_swip) return;
-                      if (detail.delta.dx > sens) {
-                        if (indicator_idx > 0) {
-                          setState(() {
-                            indicator_idx--;
-                            get_introduct_data(indicator_idx);
-                          });
-                        }
-                        is_swip = true;
-                      } else if (detail.delta.dx < -sens) {
-                        if (indicator_idx < introduce_list.length - 1) {
-                          setState(() {
-                            indicator_idx++;
-                            get_introduct_data(indicator_idx);
-                          });
-                        }
-                        is_swip = true;
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 170,
-                      decoration: BoxDecoration(
-                          color: pink4, borderRadius: BorderRadius.circular(8)),
-                      child: Stack(children: [
-                        product_card1(ind_img, ind_title, ind_con, ind_price,
-                            ind_dis_price, ind_off),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            width: double.infinity,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:
-                                  List.generate(introduce_list.length, (index) {
-                                return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        indicator_idx = index;
-                                        get_introduct_data(index);
-                                      });
-                                    },
-                                    child: dots(index == indicator_idx));
-                              }),
-                            ),
-                          ),
-                        )
-                      ]),
+    return RefreshIndicator(
+      backgroundColor: pink6,
+      color: Colors.white,
+      onRefresh: () async {
+        await init_ind_data();
+      },
+      child: sfld(
+          introduce_list.isNotEmpty && get_api_done
+              ? Column(
+                  children: [
+                    ValueListenableBuilder<int>(
+                      valueListenable: cart_db2.cart_sum_qty,
+                      builder: (context, val, child) {
+                        return top_bar(context, val, () {
+                          init_ind_data();
+                        });
+                      },
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  change_mode(() {
-                    setState(() {
-                      grid_mode = true;
-                    });
-                  }, () {
-                    setState(() {
-                      grid_mode = false;
-                    });
-                  }, grid_mode),
-                  type_card_view(type_list, type_ind, (int idx) {
-                    setState(() {
-                      type_ind = idx;
-                      serach_empty = false;
-                      type_goods_empty = false;
-                      update_cur_pro_list(idx);
-                    });
-                  }),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  current_projuct_list.isNotEmpty
-                      ? grid_mode
-                          ? product_grid_view(
-                              current_projuct_list, context, page_sel_idx_grid,
-                              (idx) {
-                              setState(() {
-                                page_sel_idx_grid = idx;
-                              });
-                            }, () {
-                              setState(() {
-                                cart_count = get_cart_row_count();
-                              });
-                            })
-                          : product_list_view(
-                              current_projuct_list, context, page_sel_idx_list,
-                              (idx) {
-                              setState(() {
-                                page_sel_idx_list = idx;
-                              });
-                            }, () {
-                              setState(() {
-                                cart_count = get_cart_row_count();
-                              });
-                            })
-                      : !serach_empty && !type_goods_empty
-                          ? cpi_box()
-                          : serach_empty
-                              ? empty_box(Icons.search_off_outlined, "查無商品")
-                              : empty_box(Icons.close, "尚無商品"),
-                ],
-              )
-            : Container(
-                child: cpi_box(),
-              ),
-        context,
-        bg: grey3);
+                    SizedBox(
+                      height: 20,
+                    ),
+                    serach_bar(serach_tec, () {
+                      String serach_txt = serach_tec.text;
+                      if (serach_txt.isEmpty) {
+                        update_cur_pro_list(type_ind);
+                      } else {
+                        List res = current_projuct_list;
+                        setState(() {
+                          current_projuct_list = res.where((e) {
+                            return e["name"].toString().contains(serach_txt) ||
+                                e["price"].toString().contains(serach_txt) ||
+                                e["description"]
+                                    .toString()
+                                    .contains(serach_txt);
+                          }).toList();
+                          if (current_projuct_list.isEmpty) {
+                            serach_empty = true;
+                          } else {
+                            serach_empty = false;
+                          }
+                        });
+                      }
+                      close_keyboard(context);
+                    }),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onHorizontalDragStart: (de) {
+                        is_swip = false;
+                      },
+                      onHorizontalDragEnd: (de) {
+                        is_swip = false;
+                      },
+                      onHorizontalDragUpdate: (detail) {
+                        int sens = 8;
+                        if (is_swip) return;
+                        if (detail.delta.dx > sens) {
+                          if (indicator_idx > 0) {
+                            setState(() {
+                              indicator_idx--;
+                              get_introduct_data(indicator_idx);
+                            });
+                          }
+                          is_swip = true;
+                        } else if (detail.delta.dx < -sens) {
+                          if (indicator_idx < introduce_list.length - 1) {
+                            setState(() {
+                              indicator_idx++;
+                              get_introduct_data(indicator_idx);
+                            });
+                          }
+                          is_swip = true;
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 170,
+                        decoration: BoxDecoration(
+                            color: pink4,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Stack(children: [
+                          product_card1(ind_img, ind_title, ind_con, ind_price,
+                              ind_dis_price, ind_off),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 8),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(introduce_list.length,
+                                    (index) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          indicator_idx = index;
+                                          get_introduct_data(index);
+                                        });
+                                      },
+                                      child: dots(index == indicator_idx));
+                                }),
+                              ),
+                            ),
+                          )
+                        ]),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    change_mode(() {
+                      setState(() {
+                        grid_mode = true;
+                      });
+                    }, () {
+                      setState(() {
+                        grid_mode = false;
+                      });
+                    }, grid_mode),
+                    type_card_view(type_list, type_ind, (int idx) {
+                      setState(() {
+                        type_ind = idx;
+                        serach_empty = false;
+                        type_goods_empty = false;
+                        update_cur_pro_list(idx);
+                      });
+                    }),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    current_projuct_list.isNotEmpty
+                        ? grid_mode
+                            ? product_grid_view(current_projuct_list, context,
+                                page_sel_idx_grid, (idx) {
+                                setState(() {
+                                  page_sel_idx_grid = idx;
+                                });
+                              }, () {
+                                cart_db2.get_user_sum_qty();
+                              }, () {
+                                init_ind_data();
+                              })
+                            : product_list_view(current_projuct_list, context,
+                                page_sel_idx_list, (idx) {
+                                setState(() {
+                                  page_sel_idx_list = idx;
+                                });
+                              }, () {
+                                cart_db2.get_user_sum_qty();
+                              }, () {
+                                init_ind_data();
+                              })
+                        : !serach_empty && !type_goods_empty
+                            ? cpi_box()
+                            : serach_empty
+                                ? empty_box(Icons.search_off_outlined, "查無商品")
+                                : empty_box(Icons.close, "尚無商品"),
+                  ],
+                )
+              : Container(
+                  child: cpi_box(),
+                ),
+          context,
+          bg: grey3),
+    );
   }
 }

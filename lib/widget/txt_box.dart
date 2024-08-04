@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../data/data.dart';
 
-Widget title_pink(String txt) {
+const Color _pink1 = Color(0xffFF9AA2);
+
+Widget title_pink(String txt, {Color color = _pink1}) {
   return Text(
     txt,
-    style: TextStyle(color: pink1, fontSize: 30, fontWeight: FontWeight.bold),
+    style: TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.bold),
   );
 }
 
@@ -38,13 +40,19 @@ Widget base_txt(String txt, {Color cor = Colors.black, bool bold = false}) {
 Widget h6(String txt, {Color cor = Colors.black, bool bold = false}) {
   return Text(
     txt,
-    style: TextStyle(color: cor, fontSize: 16, fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+    style: TextStyle(
+        color: cor,
+        fontSize: 16,
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal),
   );
 }
 
 Widget h5(String txt, {Color cor = Colors.black, bool bold = false}) {
   return Text(
     txt,
-    style: TextStyle(color: cor, fontSize: 18, fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+    style: TextStyle(
+        color: cor,
+        fontSize: 18,
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal),
   );
 }

@@ -20,8 +20,8 @@ Widget type_card_view(List list, int ind_idx, Function(int) on_clink_btn) {
         String img_src = "";
         if (idx != 0) {
           title = list[idx - 1]["name"];
-          img_src =
-              list[idx - 1]["img_src"].toString().replaceAll("../../", "");
+          img_src = list[idx - 1]["img_src"];
+          //list[idx - 1]["img_src"].toString().replaceAll("../../", "");
         }
         bool s = idx == ind_idx;
         return GestureDetector(
@@ -41,7 +41,7 @@ Widget type_card_view(List list, int ind_idx, Function(int) on_clink_btn) {
 }
 
 Widget product_grid_view(List list, BuildContext context, int ind_idx,
-    Function(int) on_click, Function add_on_click) {
+    Function(int) on_click, Function add_on_click, Function on_to_page) {
   int list_len = list.length;
   int o_page_q = 6;
   int show_count = 6, s_idx = 0, e_idx = 0;
@@ -69,17 +69,21 @@ Widget product_grid_view(List list, BuildContext context, int ind_idx,
               int idx2 = page_mode ? index + s_idx : index;
               String title = list[idx2]["name"];
               String price = list[idx2]["price"].toString();
-              String image_name = list[idx2]["image_name"];
-              String description = list[idx2]["description"];
+              String image_name = list[idx2]["img_src"];
+              String description = list[idx2]["txt"];
+              String num = list[idx2]["num"];
               return GestureDetector(
-                  onTap: () {
-                    to_page(
-                        product_detial_page(
-                            title, description, price, image_name),
-                        context);
+                  onTap: () async {
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => product_detial_page(
+                                title, description, price, image_name, num)));
+                    on_to_page();
                   },
                   child: product_card_grid(title, image_name, price, () async {
-                    await add_product_cart(title, int.parse(price), 1, 1);
+                    await add_product_cart(
+                        title, int.parse(price), 1, 1, image_name, num);
                     add_on_click();
                   }));
             }),
@@ -113,7 +117,7 @@ Widget product_grid_view(List list, BuildContext context, int ind_idx,
 }
 
 Widget product_list_view(List list, BuildContext context, int ind_idx,
-    Function(int) on_click, Function add_click) {
+    Function(int) on_click, Function add_click, Function on_to_page) {
   int list_len = list.length;
   int o_page_q = 5;
   int show_count = 5, s_idx = 0, e_idx = 0;
@@ -137,21 +141,25 @@ Widget product_list_view(List list, BuildContext context, int ind_idx,
               int idx2 = page_mode ? idx + s_idx : idx;
               String title = list[idx2]["name"];
               String price = list[idx2]["price"].toString();
-              String image_name = list[idx2]["image_name"];
-              String description = list[idx2]["description"];
+              String image_name = list[idx2]["img_src"];
+              String description = list[idx2]["txt"];
+              String num = list[idx2]["num"];
               return Container(
                 margin: EdgeInsets.only(bottom: 20),
                 height: 120,
                 child: GestureDetector(
-                    onTap: () {
-                      to_page(
-                          product_detial_page(
-                              title, description, price, image_name),
-                          context);
+                    onTap: () async {
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => product_detial_page(
+                                  title, description, price, image_name, num)));
+                      on_to_page();
                     },
                     child: product_card_list(
                         title, image_name, price, description, () async {
-                      await add_product_cart(title, int.parse(price), 1, 1);
+                      await add_product_cart(
+                          title, int.parse(price), 1, 1, image_name, num);
                       add_click();
                     })),
               );
@@ -186,15 +194,17 @@ Widget product_list_view(List list, BuildContext context, int ind_idx,
   );
 }
 
-Widget top_bar(BuildContext context, int cart_count) {
+Widget top_bar(BuildContext context, int cart_count, Function on_to_page) {
   return Align(
     alignment: Alignment.topRight,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         GestureDetector(
-          onTap: () {
-            to_page(cart_page(), context);
+          onTap: () async {
+            await Navigator.push(
+                context, MaterialPageRoute(builder: (context) => cart_page()));
+            on_to_page();
           },
           child: Stack(
             alignment: Alignment.topRight,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../data/data.dart';
@@ -54,10 +56,10 @@ Widget serach_ipt_box(TextEditingController tec) {
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "搜尋",
-            hintStyle: TextStyle(color: grey2),
+            hintStyle: TextStyle(color: pink1),
             prefixIcon: Icon(
               Icons.search_rounded,
-              color: grey2,
+              color: pink1,
             ),
             suffixIcon: GestureDetector(
               onTap: () {
@@ -65,7 +67,7 @@ Widget serach_ipt_box(TextEditingController tec) {
               },
               child: Icon(Icons.close),
             ),
-            suffixIconColor: grey2),
+            suffixIconColor: pink1),
         controller: tec,
       ),
     ),

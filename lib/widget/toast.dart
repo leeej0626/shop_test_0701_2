@@ -11,6 +11,9 @@ void show_msg(
           icons,
           color: Colors.white,
         ),
+        SizedBox(
+          width: 5,
+        ),
         Text(title)
       ],
     ),

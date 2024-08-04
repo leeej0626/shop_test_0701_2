@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:shop_test_0701/db/cart_db.dart';
 
+import '../api/get_product.dart';
 import 'data.dart';
 
 List<cart_data> cart_list = [];
@@ -20,7 +22,7 @@ class cart_data {
 }
 
 Future<String> get_product_img_name(String title) async {
-  List res2 = [];
+  /*List res2 = [];
   List file_list = [
     "birthday_cakes",
     "triangular_cakes",
@@ -30,14 +32,16 @@ Future<String> get_product_img_name(String title) async {
   for (var e in file_list) {
     List res = await get_json_file(e);
     res2.addAll(res);
-  }
+  }*/
+  List product_list = await get_product_api_data();
   String img_name = "";
-  res2.forEach((e) {
+  product_list.forEach((e) {
     if (title == e["name"]) {
-      img_name = e["image_name"];
+      img_name = e["img_src"];
     }
   });
-  return img_name;
+  String img_src2 = get_img_src(img_name);
+  return img_src2;
 }
 
 int get_cart_row_count() {
@@ -58,36 +62,53 @@ String get_product_cart_qty(String title) {
   return qty;
 }
 
-Future<void> add_product_cart(
-    String title, int price, int dis_val, int qty) async {
-  bool is_exists = false;
-  cart_list.forEach((e) {
+Future<bool> add_product_cart(String title, int price, int dis_val, int qty,
+    String image_name, String num) async {
+  var cart_db2 = cart_db();
+  //String img_src = await get_product_img_name(title);
+  //bool is_exists = false;
+  bool is_exists = await cart_db2.get_product_is_exists(title);
+  /*cart_list.forEach((e) {
     if (e.title == title) {
       is_exists = true;
       e.qty += qty;
       return;
     }
-  });
-  String img_src = await get_product_img_name(title);
+  });*/
+
   if (!is_exists) {
-    cart_list.add(cart_data(
+    bool r = await cart_db2.add_cart_row(title, image_name, price, 1, qty, num);
+    if (r) {
+      return true;
+    } /*cart_list.add(cart_data(
         title: title,
         img_src: img_src,
         price: price,
         dis_val: dis_val,
-        qty: qty));
+        qty: qty));*/
+  } else {
+    bool r = await cart_db2.add_product_qty(title, qty);
+    if (r) {
+      return true;
+    }
   }
+  return false;
 }
 
-edit_qty(String title, int qty) {
-  cart_list.forEach((e) {
+edit_qty(String title, int qty) async {
+  /*cart_list.forEach((e) {
     if (e.title == title) {
       e.qty = qty;
       return;
     }
-  });
+  });*/
+  var cart_db2 = cart_db();
+  await cart_db2.edit_product_qty(title, qty);
 }
 
-del_produce(int idx) {
-  cart_list.removeAt(idx);
+del_produce(String title, Function init) async {
+  var cart_db2 = cart_db();
+  await cart_db2.remove_product_row(title);
+  init();
+  //cart_list.removeAt(idx);
 }

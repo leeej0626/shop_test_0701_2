@@ -80,7 +80,7 @@ Widget off_card(int value) {
 }
 
 Widget type_card(String img_name, String txt, bool state) {
-  String img_url = "https://twob.fun/test/cake_shop_msg/" + "$img_name";
+  String img_url = get_img_src(img_name);
   return state
       ? Container(
           decoration: BoxDecoration(
