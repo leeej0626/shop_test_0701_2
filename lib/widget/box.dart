@@ -9,11 +9,7 @@ Widget sfld(Widget content, BuildContext context, {Color bg = Colors.white}) {
       child: Padding(
         padding: EdgeInsets.all(30),
         child: SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: content,
-          ),
+          child: content,
         ),
       ),
     ),
@@ -45,10 +41,14 @@ Widget sfld2(Widget content, BuildContext context, {Color bg = Colors.white}) {
 
 const Color _pink5 = Color(0xFFE91E63);
 
-Widget cpi_box({Color color = _pink5}) {
-  return Center(
-    child: CircularProgressIndicator(
-      color: color,
+Widget cpi_box(BuildContext context, {Color color = _pink5}) {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    height: MediaQuery.of(context).size.height,
+    child: Center(
+      child: CircularProgressIndicator(
+        color: color,
+      ),
     ),
   );
 }
@@ -75,7 +75,7 @@ Widget empty_box(IconData iconData, String txt) {
   );
 }
 
-Widget app_bar(BuildContext context,String title) {
+Widget app_bar(BuildContext context, String title) {
   return Stack(
     alignment: Alignment.center,
     children: [

@@ -117,7 +117,7 @@ class _home_pageState extends State<home_page> {
       get_api_done = true;
     });
     cart_db2.get_user_sum_qty();
-    update_cur_pro_list(0);
+    update_cur_pro_list(type_ind);
   }
 
   @override
@@ -282,14 +282,14 @@ class _home_pageState extends State<home_page> {
                                 init_ind_data();
                               })
                         : !serach_empty && !type_goods_empty
-                            ? cpi_box()
+                            ? cpi_box(context)
                             : serach_empty
                                 ? empty_box(Icons.search_off_outlined, "查無商品")
                                 : empty_box(Icons.close, "尚無商品"),
                   ],
                 )
               : Container(
-                  child: cpi_box(),
+                  child: cpi_box(context),
                 ),
           context,
           bg: grey3),

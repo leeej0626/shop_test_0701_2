@@ -3,6 +3,7 @@ import 'package:shop_test_0701/db/cart_db.dart';
 
 import '../api/get_product.dart';
 import 'data.dart';
+import 'introduct_data.dart';
 
 List<cart_data> cart_list = [];
 
@@ -64,6 +65,7 @@ String get_product_cart_qty(String title) {
 
 Future<bool> add_product_cart(String title, int price, int dis_val, int qty,
     String image_name, String num) async {
+  double dis_val = await get_product_is_dis(title);
   var cart_db2 = cart_db();
   //String img_src = await get_product_img_name(title);
   //bool is_exists = false;
@@ -77,7 +79,8 @@ Future<bool> add_product_cart(String title, int price, int dis_val, int qty,
   });*/
 
   if (!is_exists) {
-    bool r = await cart_db2.add_cart_row(title, image_name, price, 1, qty, num);
+    bool r = await cart_db2.add_cart_row(
+        title, image_name, price, dis_val, qty, num);
     if (r) {
       return true;
     } /*cart_list.add(cart_data(

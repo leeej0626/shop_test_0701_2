@@ -119,13 +119,13 @@ Widget edit_qty_box2(
       Container(
           width: 30,
           child: TextField(
-            readOnly: true,
             keyboardType: TextInputType.number,
             style: TextStyle(color: pink6),
             textAlign: TextAlign.center,
             decoration: InputDecoration(border: InputBorder.none),
             onSubmitted: (val) async {
-              tec.text = val;
+              qty = int.parse(val);
+              await edit_qty(title, qty);
               on_edit();
             },
             controller: tec,

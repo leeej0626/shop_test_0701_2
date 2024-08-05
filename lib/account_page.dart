@@ -40,7 +40,7 @@ class _account_pageState extends State<account_page> {
                 to_page(view_account_page(), context);
               }),
               btn_row("查看訂單", Icons.list, () {}),
-              out_btn_row(context)
+              out_btn_row(context),
             ],
           ),
         ),

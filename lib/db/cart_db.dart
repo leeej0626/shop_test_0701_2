@@ -13,7 +13,7 @@ class cart_db {
   String cart_list_key = "cart_list";
 
   Future<bool> add_cart_row(String title, String img_src, int price,
-      int dis_val, int qty, String num) async {
+      double dis_val, int qty, String num) async {
     final sf = await SharedPreferences.getInstance();
     List<String> list = await get_all_row();
     cart_data_modal row = cart_data_modal(
@@ -112,7 +112,7 @@ class cart_db {
       String user = row["user"];
       int price = row["price"];
       int qty = row["qty"];
-      int dis_val = row["dis_val"];
+      double dis_val = double.parse(row["dis_val"].toString());
       r_list.add(cart_data_modal(
           title: title,
           img_src: img_src,
@@ -137,7 +137,7 @@ class cart_data_modal {
   late String title;
   late String img_src;
   late int price;
-  late int dis_val;
+  late double dis_val;
   late int qty;
   late String num;
   late String user;

@@ -5,13 +5,26 @@ import 'package:shop_test_0701/widget/txt_box.dart';
 import '../data/data.dart';
 import 'btn_box.dart';
 
-Widget cart_card(BuildContext context, String img_src, String title,
-    String price, String qty, Function on_del, Function on_edit_qty) {
+Widget cart_card(
+    BuildContext context,
+    String img_src,
+    String title,
+    String price,
+    String qty,
+    Function on_del,
+    Function on_edit_qty,
+    double dis_val,
+    TextEditingController tec) {
   String img_src2 = get_img_src(img_src);
   ScrollController sro_col = ScrollController();
-  TextEditingController qty_tec = TextEditingController();
-  qty_tec.text = qty;
-  bool dis_mode = false;
+  TextEditingController qty_tec = tec;
+  //qty_tec.text = qty;
+  bool dis_mode = dis_val < 1;
+  String price2 = price;
+  if (dis_mode) {
+    double r = double.parse(price) * dis_val;
+    price2 = r.round().toString();
+  }
   scroll_to_top() {
     if (sro_col.hasClients) {
       sro_col.jumpTo(0);
@@ -69,13 +82,13 @@ Widget cart_card(BuildContext context, String img_src, String title,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    h6("\$$price", cor: pink6, bold: true),
+                                    h6("\$$price2", cor: pink6, bold: true),
                                     SizedBox(
                                       width: 5,
                                     ),
                                     dis_mode
                                         ? Text(
-                                            "\$3000",
+                                            "\$${price}",
                                             style: TextStyle(
                                                 color: grey2,
                                                 decoration:

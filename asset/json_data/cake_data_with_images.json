@@ -4,16 +4,16 @@
         "description": "搭配進口草莓內陷",
         "original_price": 350,
         "discount": 0.9,
-        "discounted_price": 315,
+        "discounted_price": 333,
         "image_name": "strawberry-cake2"
     },
     {
-        "name": "巧克力慕斯蛋糕",
-        "description": "搭配新鮮水果",
-        "original_price": 400,
+        "name": "經典巧克力生日蛋糕",
+        "description": "選用高品質的黑巧克力",
+        "original_price": 850,
         "discount": 0.85,
-        "discounted_price": 340,
-        "image_name": "chocolate-cake"
+        "discounted_price": 723,
+        "image_name": "cake"
     },
     {
         "name": "抹茶草莓蛋糕",
